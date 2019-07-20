@@ -1,0 +1,26 @@
+
+version: "3"
+
+services:
+    c9:
+        build: "c9-base"
+        volumes:
+            - "$C9DIR:/workspace/"
+            - "$C9SETTINGS:/root/.c9/user.settings"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        environment:
+            WORKSPACE:
+            COMPOSE_PROJECT_NAME: "${C9_COMPOSE_PROJECT_NAME}"
+            COMPOSE_FILE: "${C9_COMPOSE_FILE}"
+        ports:
+            - "$C9PORT:8181"
+        command:
+            - "--auth"
+            - "$C9AUTH"
+
+    c9-base:
+        build: 
+            context: "c9-base"
+            args:
+                - "WORKSPACE=${WORKSPACE}"
+
