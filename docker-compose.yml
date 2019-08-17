@@ -6,21 +6,25 @@ services:
         build: "c9-base"
         volumes:
             - "$C9DIR:/workspace/"
+            - "$HOME/.gitconfig:/root/.gitconfig"
             - "$C9SETTINGS:/root/.c9/user.settings"
             - "/var/run/docker.sock:/var/run/docker.sock"
+            - "$SSH_AUTH_SOCK:/tmp/ssh.auth.sock:ro"
+            - "$C9DIR/.c9-bash-history:/root/.bash-history"
         environment:
             WORKSPACE:
             COMPOSE_PROJECT_NAME: "${C9_COMPOSE_PROJECT_NAME}"
             COMPOSE_FILE: "${C9_COMPOSE_FILE}"
+            SSH_AUTH_SOCK: "/tmp/ssh.auth.sock"
         ports:
             - "$C9PORT:8181"
         command:
             - "--auth"
             - "$C9AUTH"
 
-    c9-base:
-        build: 
-            context: "c9-base"
-            args:
-                - "WORKSPACE=${WORKSPACE}"
+#    c9-base:
+#        build: 
+#            context: "c9-base"
+#            args:
+#                - "WORKSPACE=${WORKSPACE}"
 

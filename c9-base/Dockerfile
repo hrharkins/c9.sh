@@ -4,8 +4,13 @@ add ./get-docker.sh ./
 run bash ./get-docker.sh
 run apt-get update
 run apt-get install -y \
-    python python3 python-pip python3-pip
+    python python3 python-pip python3-pip \
+    vim git ssh
 run pip install docker-compose
+run apt-get install -y \
+    nodejs golang-go
+run npm install npm@latest -g && \
+    npm install -g create-react-app
 
 #run apt-get update
 #run apt-get install -y \

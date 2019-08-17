@@ -19,6 +19,10 @@ function get_default_port
         {
             echo $UID;
             echo $C9PROJECT;
+            for word in "$@";
+            do
+                echo "$word";
+            done;
         } | shasum
     )
     echo $(( 0x$(expr substr "$sha" 1 4) % 10000 + 40000 ))
@@ -47,7 +51,7 @@ function opt_add_compose_file
 {
     if [ -f "$1" ]
     then
-        COMPOSE_FILE="$1:$COMPOSE_FILE"
+        COMPOSE_FILE="$COMPOSE_FILE:$1"
     else
         return 1
     fi
@@ -62,11 +66,13 @@ function opt_add_path
 
 if [ ! "$@" ]
 then
-    set up $DAEMON_FLAG "$C9SERVICE"
+    #set up $DAEMON_FLAG "$C9SERVICE"
+    set up $DAEMON_FLAG 
 fi
 
 opt_add_path "$HOME/.c9-docker/" || true
-opt_add_path "$PWD/docker-compose.c9.yml" || true
+opt_add_path "$C9BINDIR/extras/jupyter/" || true
+opt_add_path "$PWD" || true
 
 export C9PORT=${C9PORT:-$(get_default_port)}
 export C9AUTH=$(cat $HOME/.c9-auth)
@@ -74,13 +80,16 @@ export WORKSPACE=${C9DIR}
 export C9_COMPOSE_PROJECT_NAME=${C9_COMPOSE_PROJECT_NAME:-$(basename "$C9DIR")}
 export C9_COMPOSE_FILE=/workspace/docker-compose.yml:/workspace/docker/devel.yml
 
+echo "COMPOSE_FILE=$COMPOSE_FILE"
 docker-compose -p "$C9PROJECT" build
 
 if [ "$RESTART" ]
 then
+    docker-compose stop
     docker-compose rm -fs
 fi
 
 echo "PORT = $C9PORT"
+touch "$C9DIR/.c9-bash-history"
 docker-compose -p "$C9PROJECT" "$@"
 
