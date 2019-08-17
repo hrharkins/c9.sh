@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docekr ps  | grep '-c9'
+docker ps --format 'table {{.Image}}\t{{.Ports}}' | grep -- '-c9'
